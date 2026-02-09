@@ -1,27 +1,22 @@
 import { useMutation } from "@tanstack/react-query";
-import { api, type InsertContactSubmission } from "@shared/routes";
 import { useToast } from "@/hooks/use-toast";
+
+type ContactSubmission = {
+  name: string;
+  email: string;
+  message: string;
+};
 
 export function useCreateContactSubmission() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (data: InsertContactSubmission) => {
-      const res = await fetch(api.contact.submit.path, {
-        method: api.contact.submit.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+    mutationFn: async (_data: ContactSubmission) => {
+      // Simulate API request (no backend)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      if (!res.ok) {
-        if (res.status === 400) {
-          const error = await res.json();
-          throw new Error(error.message || "Validation failed");
-        }
-        throw new Error("Failed to send message");
-      }
-
-      return await res.json();
+      // Pretend success response
+      return { success: true };
     },
     onSuccess: () => {
       toast({
@@ -29,10 +24,10 @@ export function useCreateContactSubmission() {
         description: "Thank you for reaching out. I'll get back to you shortly.",
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Failed to send message. Please try again later.",
         variant: "destructive",
       });
     },
